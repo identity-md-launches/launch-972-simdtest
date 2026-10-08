@@ -29,7 +29,7 @@ contract MockIMD is ERC20 {
     }
 }
 
-abstract contract HookTestBase is Test {
+abstract contract HookTestFixture is Test {
     using StateLibrary for IPoolManager;
     using TransientStateLibrary for IPoolManager;
 
@@ -55,7 +55,7 @@ abstract contract HookTestBase is Test {
 
     function _pair0() internal pure virtual returns (bool);
 
-    function setUp() public {
+    function setUp() public virtual {
         vm.chainId(1);
         vm.roll(100);
         vm.warp(10_000);
@@ -158,6 +158,11 @@ abstract contract HookTestBase is Test {
         assertEq(manager.getNonzeroDeltaCount(), 0);
         assertFalse(manager.isUnlocked());
     }
+}
+
+abstract contract HookTestBase is HookTestFixture {
+    using StateLibrary for IPoolManager;
+    using TransientStateLibrary for IPoolManager;
 
     function testInitializationAndPermissions() public view {
         assertTrue(hook.opened());
@@ -560,6 +565,7 @@ abstract contract HookTestBase is Test {
         }
     }
 
+    /// forge-config: default.fuzz.runs = 1000
     function testFuzzFeeAccounting(bool buy, bool exactInput, uint88 raw, uint8 elapsed) public {
         uint256 amount = bound(uint256(raw), 1 ether, 100_000 ether);
         uint256 blocksElapsed = bound(uint256(elapsed), 0, 15);
@@ -574,12 +580,14 @@ abstract contract HookTestBase is Test {
     }
 }
 
+/// forge-config: default.fuzz.runs = 1000
 contract SIMDTESTHookPair0Test is HookTestBase {
     function _pair0() internal pure override returns (bool) {
         return true;
     }
 }
 
+/// forge-config: default.fuzz.runs = 1000
 contract SIMDTESTHookPair1Test is HookTestBase {
     function _pair0() internal pure override returns (bool) {
         return false;
