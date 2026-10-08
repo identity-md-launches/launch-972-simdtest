@@ -1,0 +1,24 @@
+{
+  "kind": "univ4_hook",
+  "chainId": 1,
+  "token": {
+    "contract": "SIMDTEST",
+    "name": "SIMDTEST",
+    "symbol": "SIMDTEST",
+    "decimals": 18,
+    "totalSupply": "1000000000000000000000000000",
+    "constructorArgs": []
+  },
+  "hook": {
+    "contract": "SIMDTESTHook",
+    "constructorArgs": ["$poolManager", "$token"],
+    "permissions": ["beforeInitialize", "beforeSwap", "afterSwap", "beforeSwapReturnDelta", "afterSwapReturnDelta"]
+  },
+  "pool": {
+    "pairedCurrency": "0xd34a99bc0f67ae1bbd63c660e6d0b0dd03e263b7",
+    "fee": 12500,
+    "tickSpacing": 60,
+    "initialPrice": "79228162514264337593543950336"
+  },
+  "notes": "Ethereum mainnet; resolve $poolManager to 0x000000000004444c5dc75cB358380D2e3dE08A90 and $token to the freshly deployed SIMDTEST. The factory atomically deploys, initializes and seeds the pool with 90% of the fixed supply (900000000 tokens); its launch policy handles the other 10%. initialPrice is provenance only; the factory derives the opening price from launch economics. Mine the hook address for permissions mask 0x20cc. IMD-only anti-snipe fees are donated in the same swap; rate is 30% at B, decreases 3 percentage points per block, and is zero at B+10. Buy cap is 10000000 SIMDTEST until T+3600. Fee-bearing exact-input buys and exact-output sells must fully fill. No owner, setters or additional deployed application contracts. See README.md for accounting and operational responsibilities."
+}
