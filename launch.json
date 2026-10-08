@@ -1,13 +1,10 @@
 {
   "kind": "univ4_hook",
-  "chainId": 1,
   "token": {
     "contract": "SIMDTEST",
     "name": "SIMDTEST",
     "symbol": "SIMDTEST",
-    "decimals": 18,
-    "totalSupply": "1000000000000000000000000000",
-    "constructorArgs": []
+    "decimals": 18
   },
   "hook": {
     "contract": "SIMDTESTHook",
@@ -20,5 +17,5 @@
     "tickSpacing": 60,
     "initialPrice": "79228162514264337593543950336"
   },
-  "notes": "Ethereum mainnet; resolve $poolManager to 0x000000000004444c5dc75cB358380D2e3dE08A90 and $token to the freshly deployed SIMDTEST. The factory atomically deploys, initializes and seeds the pool with 90% of the fixed supply (900000000 tokens); its launch policy handles the other 10%. initialPrice is provenance only; the factory derives the opening price from launch economics. Mine the hook address for permissions mask 0x20cc. IMD-only anti-snipe fees are donated in the same swap; rate is 30% at B, decreases 3 percentage points per block, and is zero at B+10. Buy cap is 10000000 SIMDTEST until T+3600. Fee-bearing exact-input buys and exact-output sells must fully fill. No owner, setters or additional deployed application contracts. See README.md for accounting and operational responsibilities."
+  "notes": "SIMDTESTHook binds one SIMDTEST/IMD pool with a static 1.25% LP fee and tick spacing 60. For Ethereum mainnet, $poolManager resolves to 0x000000000004444c5dc75cB358380D2e3dE08A90 and $token to the freshly deployed SIMDTEST. SIMDTEST has no constructor arguments and mints its fixed 1,000,000,000-token supply (18 decimals) to its deployer. Supply allocation and the 90% liquidity seed are governed by the separate launch policy, not this manifest or hook. Deployment and pool initialization must be atomic, with liquidity seeded before swaps. initialPrice is decimal sqrtPriceX96 provenance; the factory sets the opening price from launch economics. The hook address must have permission bits 0x20cc. PoolManager-only beforeInitialize validates the bound pool and records opening block B and timestamp T. The extra swap fee is 30% at B, decreases by 3 percentage points each block, and is zero from B+10. All extra fees are denominated in IMD and immediately donated through PoolManager.donate in afterSwap. Donations increase claimable fees for liquidity in range after the swap, not position liquidity units; the hook does not burn or transfer IMD elsewhere. With D=1000000 and rate r, exact-input buys charge floor(gross IMD input*r/D), exact-input sells charge floor(actual core IMD output*r/D), exact-output buys charge floor(actual core IMD input*r/(D-r)), and exact-output sells charge floor(requested net IMD output*r/(D-r)). The normal pool LP fee remains 12500. Exact-input buys and exact-output sells with a nonzero extra fee must fully fill or revert. Before T+3600, each buy may receive at most 10,000,000 SIMDTEST (1% of supply); sells and transfers have no such cap. The block and timestamp windows are independent. After both expire, no hook fee or buy limit applies. No owner, admin, setters, upgradeability, pausing, post-construction minting, other taxes, or additional application contracts."
 }
